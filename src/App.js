@@ -66,6 +66,32 @@ function Create(props) {
   )
 }
 
+function Update(props) {
+  const [title, setTitle] = useState(props.title);
+  const [body, setBody] = useState(props.body);
+  return (
+    <article>
+      <h2>Update</h2>
+      <form onSubmit={event => {
+        event.preventDefault();
+        const title = event.target.title.value;
+        const body = event.target.body.value;
+        props.onUpdate(title, body);
+      }}>
+        <p><input type='text' name='title' placeholder='title' value={title} onChange={event => {
+          console.log(event.target.value);
+          setTitle(event.target.value);
+        }} /></p>
+        <p><textarea name='body' placeholder='body' value={body} onChange={event => {
+          console.log(event.target.value);
+          setBody(event.target.value);
+        }} /></p>
+        <p><input type='submit' value='Update' /></p>
+      </form>
+    </article >
+  )
+}
+
 function App() {
   const [mode, setMode] = useState("WELCOME");
   const [id, setId] = useState(null);
@@ -76,19 +102,23 @@ function App() {
     { id: 3, title: "javascript", body: "javascript is ..." }
   ])
   let content = null;
+  let contextControl = null;
 
   if (mode === "WELCOME") {
     content = <Article title="Welcome" body="Hello, WEB" />
   } else if (mode === "READ") {
     let title, body = null;
     for (let i = 0; i < topics.length; i++) {
-      console.log(topics[i].id, id);
       if (topics[i].id === id) {
         title = topics[i].title;
         body = topics[i].body;
       }
     }
     content = <Article title={title} body={body} />
+    contextControl = <li><a href={'/update' + id} onClick={event => {
+      event.preventDefault();
+      setMode('UPDATE');
+    }}>Update</a></li>
   } else if (mode === "CREATE") {
     content = <Create onCreate={(_title, _body) => {
       const newTopic = { id: nextId, title: _title, body: _body }  //{property:parameter}
@@ -98,6 +128,31 @@ function App() {
       setMode("READ");
       setId(nextId);
       setNextId(nextId + 1);
+    }} />
+  } else if (mode === 'UPDATE') {
+    let title, body = null;
+    for (let i = 0; i < topics.length; i++) {
+      if (topics[i].id === id) {
+        title = topics[i].title;
+        body = topics[i].body;
+      }
+    }
+    content = <Update title={title} body={body} onUpdate={(title, body) => {
+      console.log(title, body);
+      const newTopics = [...topics]
+      const updatedTopic = {
+        id: id,
+        title: title,
+        body: body
+      }
+      for (let i = 0; i < newTopics.length; i++) {
+        if (newTopics[i].id === id) {
+          newTopics[i] = updatedTopic;
+          break;
+        }
+      }
+      setTopics(newTopics);
+      setMode("READ");
     }} />
   }
 
@@ -112,11 +167,15 @@ function App() {
         setId(_id)
       }} />
       {content}
-      <a href="/create" onClick={event => {
-        event.preventDefault(); //<a>를 동작 못하게 함
-        setMode("CREATE");
-
-      }}>Create</a>
+      <ul>
+        <li>
+          <a href="/create" onClick={event => {
+            event.preventDefault(); //<a>를 동작 못하게 함
+            setMode("CREATE");
+          }}>Create</a>
+        </li>
+        {contextControl}
+      </ul>
     </div>
   );
 }
