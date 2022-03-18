@@ -1,6 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
 import { useState } from "react"; //{}는 hook. hook은 리액트에서 기본적으로 제공하는 함수
+import UseState from './component/UseState';
+import UseReducer1 from './component/UseReducer1';
+import UseReducer2 from './component/UseReducer2';
 
 function Header(props) {
   console.log("props", props, props.title);
@@ -174,25 +177,30 @@ function App() {
   }
 
   return (
-    <div>
-      <Header title="Web" onChangeMode={() => {
-        setMode("WELCOME");
-      }} />
-      <Nav topics={topics} onChangeMode={_id => {
-        setMode("READ");
-        setId(_id)
-      }} />
-      {content}
-      <ul>
-        <li>
-          <a href="/create" onClick={event => {
-            event.preventDefault(); //<a>를 동작 못하게 함
-            setMode("CREATE");
-          }}>Create</a>
-        </li>
-        {contextControl}
-      </ul>
-    </div>
+    <>
+      <div>
+        <Header title="Web" onChangeMode={() => {
+          setMode("WELCOME");
+        }} />
+        <Nav topics={topics} onChangeMode={_id => {
+          setMode("READ");
+          setId(_id)
+        }} />
+        {content}
+        <ul>
+          <li>
+            <a href="/create" onClick={event => {
+              event.preventDefault(); //<a>를 동작 못하게 함
+              setMode("CREATE");
+            }}>Create</a>
+          </li>
+          {contextControl}
+        </ul>
+      </div>
+      useState<UseState />
+      useReducer1<UseReducer1 />
+      UseReducer2<UseReducer2 />
+    </>
   );
 }
 
