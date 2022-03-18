@@ -1,99 +1,15 @@
 import logo from './logo.svg';
 import './App.css';
 import { useState } from "react"; //{}는 hook. hook은 리액트에서 기본적으로 제공하는 함수
+
+import Header from './component/Header';
+import Nav from './component/Nav';
+import Article from './component/Article';
+import Create from './component/Create';
+import Update from './component/Update';
 import UseState from './component/UseState';
 import UseReducer1 from './component/UseReducer1';
 import UseReducer2 from './component/UseReducer2';
-
-function Header(props) {
-  console.log("props", props, props.title);
-
-  return (
-    <header>
-      <h1><a href='/' onClick={event => {
-        event.preventDefault(); //이벤트 실행 방지
-        props.onChangeMode();
-      }}>{props.title}</a></h1>
-    </header>
-  )
-}
-
-function Nav(props) {
-  const lis = [];
-  for (let i = 0; i < props.topics.length; i++) {
-    let t = props.topics[i];
-    lis.push(
-      <li key={t.id}>
-        <a href={"/read/" + t.id} id={t.id} onClick={event => {
-          event.preventDefault();
-          props.onChangeMode(Number(event.target.id));
-        }}>{t.title}</a>
-      </li>
-    );
-  }
-  console.log("lis: " + lis);
-
-  return (
-    <nav>
-      <ol>
-        {lis}
-      </ol>
-    </nav>
-  )
-}
-
-function Article(props) {
-  return (
-    <article>
-      <h2>{props.title}</h2>
-      {props.body}
-    </article>
-  )
-}
-
-function Create(props) {
-  return (
-    <article>
-      <h2>Create</h2>
-      <form onSubmit={event => {
-        event.preventDefault();
-        const title = event.target.title.value;
-        const body = event.target.body.value;
-        props.onCreate(title, body);
-      }}>
-        <p><input type='text' name='title' placeholder='title' /></p>
-        <p><textarea name='body' placeholder='body' /></p>
-        <p><input type='submit' value='Create' /></p>
-      </form>
-    </article >
-  )
-}
-
-function Update(props) {
-  const [title, setTitle] = useState(props.title);
-  const [body, setBody] = useState(props.body);
-  return (
-    <article>
-      <h2>Update</h2>
-      <form onSubmit={event => {
-        event.preventDefault();
-        const title = event.target.title.value;
-        const body = event.target.body.value;
-        props.onUpdate(title, body);
-      }}>
-        <p><input type='text' name='title' placeholder='title' value={title} onChange={event => {
-          console.log(event.target.value);
-          setTitle(event.target.value);
-        }} /></p>
-        <p><textarea name='body' placeholder='body' value={body} onChange={event => {
-          console.log(event.target.value);
-          setBody(event.target.value);
-        }} /></p>
-        <p><input type='submit' value='Update' /></p>
-      </form>
-    </article >
-  )
-}
 
 function App() {
   const [mode, setMode] = useState("WELCOME");
@@ -107,8 +23,11 @@ function App() {
   let content = null;
   let contextControl = null;
 
+  //홈으로
   if (mode === "WELCOME") {
     content = <Article title="Welcome" body="Hello, WEB" />
+
+    //Read
   } else if (mode === "READ") {
     let title, body = null;
     for (let i = 0; i < topics.length; i++) {
@@ -139,6 +58,8 @@ function App() {
           }} />
         </li>
       </>
+
+    //Create    
   } else if (mode === "CREATE") {
     content = <Create onCreate={(_title, _body) => {
       const newTopic = { id: nextId, title: _title, body: _body }  //{property:parameter}
@@ -149,6 +70,8 @@ function App() {
       setId(nextId);
       setNextId(nextId + 1);
     }} />
+
+    //Update
   } else if (mode === 'UPDATE') {
     let title, body = null;
     for (let i = 0; i < topics.length; i++) {
@@ -197,9 +120,9 @@ function App() {
           {contextControl}
         </ul>
       </div>
-      useState<UseState />
-      useReducer1<UseReducer1 />
-      UseReducer2<UseReducer2 />
+      <p>useState<UseState /></p>
+      <p>useReducer1<UseReducer1 /></p>
+      <p>UseReducer2<UseReducer2 /></p>
     </>
   );
 }
